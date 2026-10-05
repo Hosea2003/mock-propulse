@@ -72,6 +72,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "campaign_targets"
       referencedColumns: ["id","campaign_id","user_id"]
+    },{
+      foreignKeyName: "daily_results_target_id_campaign_id_user_id_fkey"
+      columns: ["target_id","campaign_id","user_id"]
+isOneToOne: false
+      referencedRelation: "target_performance"
+      referencedColumns: ["target_id","campaign_id","user_id"]
     }
                   ]
                 },"plans": {
@@ -115,12 +121,32 @@ isOneToOne: false
                 }
           }
           Views: {
-            "my_quota": {
+            "daily_followers": {
+                  Row: {
+                    "day": string | null,"followers_gained": number | null,"interactions": number | null,"user_id": string | null
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"my_quota": {
                   Row: {
                     "plan_id": string | null,"plan_name": string | null,"quota": number | null,"used": number | null,"user_id": string | null
                   }
                   Relationships: [
                     
+                  ]
+                },"target_performance": {
+                  Row: {
+                    "campaign_handle": string | null,"campaign_id": string | null,"follow_back_rate": number | null,"followers_gained": number | null,"handle": string | null,"interactions": number | null,"target_id": string | null,"user_id": string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "campaign_targets_campaign_id_user_id_fkey"
+      columns: ["campaign_id","user_id"]
+isOneToOne: false
+      referencedRelation: "campaigns"
+      referencedColumns: ["id","user_id"]
+    }
                   ]
                 }
           }

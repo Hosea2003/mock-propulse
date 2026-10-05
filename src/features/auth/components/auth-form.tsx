@@ -5,7 +5,7 @@ import { useActionState, useState } from "react"
 import { ArrowRight, Eye, EyeOff, Lock, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { login, signup, type AuthState } from "@/app/auth/actions"
+import { login, signup, type AuthState } from "@/features/auth/actions"
 
 type Mode = "login" | "signup"
 

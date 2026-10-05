@@ -1,7 +1,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(16);
+select plan(18);
 
 -- Two users; profiles are created by the signup trigger
 insert into auth.users (id, email) values
@@ -123,6 +123,18 @@ select is(
   (select used from public.my_quota),
   4000,
   'my_quota shows the current month usage'
+);
+
+-- ── Dashboard views respect RLS ─────────────────────────────────────────
+select pg_temp.login_as('22222222-2222-2222-2222-222222222222');
+select is_empty(
+  $$ select 1 from public.daily_followers $$,
+  'Bob does not aggregate Alice''s results'
+);
+select results_eq(
+  $$ select handle::text from public.target_performance $$,
+  $$ values ('bread_lover') $$,
+  'Bob only sees the performance of his own targets'
 );
 
 select * from finish();

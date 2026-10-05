@@ -42,6 +42,7 @@
   --color-brand-from: var(--brand-from);
   --color-brand-via: var(--brand-via);
   --color-brand-to: var(--brand-to);
+  --color-success: var(--success);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -73,6 +74,7 @@
   --brand-from: oklch(0.66 0.19 300);
   --brand-via: oklch(0.7 0.17 10);
   --brand-to: oklch(0.8 0.13 65);
+  --success: oklch(0.8 0.17 150);
   --chart-1: oklch(0.66 0.19 300);
   --chart-2: oklch(0.7 0.17 10);
   --chart-3: oklch(0.8 0.13 65);
@@ -111,6 +113,7 @@
   --brand-from: oklch(0.66 0.19 300);
   --brand-via: oklch(0.7 0.17 10);
   --brand-to: oklch(0.8 0.13 65);
+  --success: oklch(0.72 0.17 150);
   --chart-1: oklch(0.66 0.19 300);
   --chart-2: oklch(0.7 0.17 10);
   --chart-3: oklch(0.8 0.13 65);

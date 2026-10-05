@@ -1,5 +1,5 @@
 import Logo from '@/components/ui/logo'
-import { AuthForm } from '@/app/auth/auth-form'
+import { AuthForm } from '@/features/auth/components/auth-form'
 
 function SignupPage() {
   return (
