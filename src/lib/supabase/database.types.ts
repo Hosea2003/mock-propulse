@@ -23,16 +23,135 @@ export type Database = {
           }
         },"public": {
           Tables: {
-            [_ in never]: never
+            "campaign_targets": {
+                  Row: {
+                    "campaign_id": string,"created_at": string,"handle": string,"id": string,"user_id": string
+                  }
+                  Insert: {
+                    "campaign_id": string,"created_at"?: string,"handle": string,"id"?: string,"user_id": string
+                  }
+                  Update: {
+                    "campaign_id"?: string,"created_at"?: string,"handle"?: string,"id"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "campaign_targets_campaign_id_user_id_fkey"
+      columns: ["campaign_id","user_id"]
+isOneToOne: false
+      referencedRelation: "campaigns"
+      referencedColumns: ["id","user_id"]
+    }
+                  ]
+                },"campaigns": {
+                  Row: {
+                    "created_at": string,"id": string,"instagram_handle": string,"status": Database["public"]['Enums']["campaign_status"],"user_id": string
+                  }
+                  Insert: {
+                    "created_at"?: string,"id"?: string,"instagram_handle": string,"status"?: Database["public"]['Enums']["campaign_status"],"user_id"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"instagram_handle"?: string,"status"?: Database["public"]['Enums']["campaign_status"],"user_id"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"daily_results": {
+                  Row: {
+                    "campaign_id": string,"created_at": string,"day": string,"follow_back_rate": number | null,"followers_gained": number,"id": number,"interactions": number,"target_id": string,"user_id": string
+                  }
+                  Insert: {
+                    "campaign_id": string,"created_at"?: string,"day": string,"follow_back_rate"?: never,"followers_gained": number,"id"?: never,"interactions": number,"target_id": string,"user_id": string
+                  }
+                  Update: {
+                    "campaign_id"?: string,"created_at"?: string,"day"?: string,"follow_back_rate"?: never,"followers_gained"?: number,"id"?: never,"interactions"?: number,"target_id"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "daily_results_target_id_campaign_id_user_id_fkey"
+      columns: ["target_id","campaign_id","user_id"]
+isOneToOne: false
+      referencedRelation: "campaign_targets"
+      referencedColumns: ["id","campaign_id","user_id"]
+    }
+                  ]
+                },"plans": {
+                  Row: {
+                    "id": string,"monthly_interaction_quota": number,"name": string
+                  }
+                  Insert: {
+                    "id": string,"monthly_interaction_quota": number,"name": string
+                  }
+                  Update: {
+                    "id"?: string,"monthly_interaction_quota"?: number,"name"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"profiles": {
+                  Row: {
+                    "created_at": string,"id": string,"plan_id": string
+                  }
+                  Insert: {
+                    "created_at"?: string,"id": string,"plan_id"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"plan_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "profiles_plan_id_fkey"
+      columns: ["plan_id"]
+isOneToOne: false
+      referencedRelation: "my_quota"
+      referencedColumns: ["plan_id"]
+    },{
+      foreignKeyName: "profiles_plan_id_fkey"
+      columns: ["plan_id"]
+isOneToOne: false
+      referencedRelation: "plans"
+      referencedColumns: ["id"]
+    }
+                  ]
+                }
           }
           Views: {
-            [_ in never]: never
+            "my_quota": {
+                  Row: {
+                    "plan_id": string | null,"plan_name": string | null,"quota": number | null,"used": number | null,"user_id": string | null
+                  }
+                  Relationships: [
+                    
+                  ]
+                }
           }
           Functions: {
-            [_ in never]: never
+            "create_campaign":
+{ Args: { "p_instagram_handle": string,"p_targets": (string)[] }; Returns: string
+                           },
+"record_daily_result":
+{ Args: { "p_day": string,"p_follow_back_rate": number,"p_interactions": number,"p_target_id": string }; Returns: {
+              "campaign_id": string,
+"created_at": string,
+"day": string,
+"follow_back_rate": number | null,
+"followers_gained": number,
+"id": number,
+"interactions": number,
+"target_id": string,
+"user_id": string
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "daily_results"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
+"set_plan":
+{ Args: { "p_plan_id": string }; Returns: undefined
+                           }
           }
           Enums: {
-            [_ in never]: never
+            "campaign_status": "active"|"paused"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -152,7 +271,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            
+            "campaign_status": ["active", "paused"]
           }
         }
 } as const
