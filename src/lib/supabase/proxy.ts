@@ -28,7 +28,17 @@ export async function updateSession(request: NextRequest) {
 
   // Refreshes the auth token if expired. Don't put code between
   // createServerClient and this call.
-  await supabase.auth.getClaims()
+  const { data } = await supabase.auth.getClaims()
+  const isLoggedIn = !!data?.claims
+  const isAuthPage = request.nextUrl.pathname.startsWith("/auth")
+
+  // Signed-out users can only reach /auth/*; signed-in users skip login/signup
+  if (!isLoggedIn && !isAuthPage) {
+    return NextResponse.redirect(new URL("/auth/login", request.url))
+  }
+  if (isLoggedIn && isAuthPage && !request.nextUrl.pathname.startsWith("/auth/callback")) {
+    return NextResponse.redirect(new URL("/", request.url))
+  }
 
   return response
 }
