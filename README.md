@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Propulse
 
-## Getting Started
+Propulse grows Instagram accounts with real followers. Users create campaigns for their handle and pick target accounts. The dashboard then tracks interactions, follow-backs and the monthly interaction quota for the user's plan.
 
-First, run the development server:
+Built with Next.js 16 (App Router), React 19, Tailwind CSS 4, shadcn/ui, Recharts and Supabase (Postgres, Auth, Row Level Security).
+
+## Screenshots
+
+| Login | Dashboard |
+| --- | --- |
+| ![Login](docs/screenshots/login.png) | ![Dashboard](docs/screenshots/dashboard.png) |
+
+## Prerequisites
+
+- Node.js 20+
+- pnpm (the version is pinned in `package.json`; run `corepack enable` to use it)
+- Docker, which the Supabase CLI needs to run the local stack
+
+The Supabase CLI is a dev dependency, so you don't need a global install.
+
+## Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# 1. Install dependencies
+pnpm install
+
+# 2. Create your env file
+cp .env.example .env.local
+
+# 3. Start the local Supabase stack (Postgres, Auth, Studio…)
+pnpm db:start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`pnpm db:start` prints the local credentials when it's ready. You can print them again any time with `pnpm db:status`. Copy them into `.env.local`:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Variable | Value from `db:status` |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | API URL (default `http://127.0.0.1:54321`) |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Publishable key |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Then set up the database and start the app:
 
-## Learn More
+```bash
+# 4. Apply migrations and load demo data
+pnpm db:reset
 
-To learn more about Next.js, take a look at the following resources:
+# 5. Run the dev server
+pnpm dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Open [http://localhost:3000](http://localhost:3000) and sign in with the demo account:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Email:** `demo@propulse.dev`
+- **Password:** `password123`
 
-## Deploy on Vercel
+The seeded account is on the *Croissance* plan. It has two campaigns and 35 days of results.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Database scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Script | What it does |
+| --- | --- |
+| `pnpm db:start` | Start the local Supabase stack in Docker |
+| `pnpm db:stop` | Stop the local Supabase stack |
+| `pnpm db:status` | Show local URLs and keys |
+| `pnpm db:migrate` | Apply pending migrations from `supabase/migrations` |
+| `pnpm db:seed` | Run `supabase/seed.sql` against the local database |
+| `pnpm db:reset` | Drop the local database, re-apply all migrations, then seed |
+| `pnpm db:types` | Regenerate `src/lib/supabase/database.types.ts` from the local schema |
+| `pnpm db:test` | Run the pgTAP tests in `supabase/tests` |
+
+> **Note:** the seed inserts fixed IDs, so `pnpm db:seed` works only on an empty database. To start over, use `pnpm db:reset`.
+
+To add a schema change, create a migration with `pnpm exec supabase migration new <name>`. Apply it with `pnpm db:migrate`, then run `pnpm db:types`.
+
+## Other scripts
+
+| Script | What it does |
+| --- | --- |
+| `pnpm dev` | Start the Next.js dev server |
+| `pnpm build` | Build for production |
+| `pnpm start` | Serve the production build |
+| `pnpm lint` | Run ESLint |
+
+## Project structure
+
+```
+src/
+  app/
+    (dashboard)/     Authenticated dashboard (route group)
+    auth/            Login, sign-up and the OAuth/email callback route
+  components/ui/     Shared UI primitives (shadcn/ui)
+  features/
+    auth/            Server actions and auth form
+    dashboard/       Dashboard queries, types and widgets
+  lib/supabase/      Supabase clients (browser, server, proxy) and generated types
+  proxy.ts           Session refresh and route protection
+supabase/
+  migrations/        Schema: plans, profiles, campaigns, daily results, quota, dashboard views
+  seed.sql           Demo user and data
+  tests/database/    RLS and quota tests
+```
