@@ -1,6 +1,8 @@
-# Propulse
+# Mock Propulse
 
-Propulse grows Instagram accounts with real followers. Users create campaigns for their handle and pick target accounts. The dashboard then tracks interactions, follow-backs and the monthly interaction quota for the user's plan.
+A mock dashboard for Instagram growth campaigns. It shows each campaign's interactions, follow-backs, follower growth and the plan's monthly interaction quota.
+
+It doesn't link to Instagram, and you can't create campaigns from the app. All data, including campaigns, target accounts and daily results, comes from the seed ([supabase/seed.sql](supabase/seed.sql)).
 
 Built with Next.js 16 (App Router), React 19, Tailwind CSS 4, shadcn/ui, Recharts and Supabase (Postgres, Auth, Row Level Security).
 
