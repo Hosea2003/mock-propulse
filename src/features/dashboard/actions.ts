@@ -2,13 +2,19 @@
 
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
+import { z } from "zod"
 import { createClient } from "@/lib/supabase/server"
-import { CAMPAIGN_STATUSES, type CampaignStatus } from "@/features/dashboard/types"
+import { CAMPAIGN_STATUSES } from "@/features/dashboard/types"
+
+const setCampaignStatusSchema = z.object({
+  id: z.uuid(),
+  status: z.enum(CAMPAIGN_STATUSES),
+})
 
 export async function setCampaignStatus(formData: FormData) {
-  const id = String(formData.get("id") ?? "")
-  const status = String(formData.get("status") ?? "") as CampaignStatus
-  if (!id || !CAMPAIGN_STATUSES.includes(status)) throw new Error("Invalid campaign status")
+  const parsed = setCampaignStatusSchema.safeParse(Object.fromEntries(formData))
+  if (!parsed.success) throw new Error("Invalid campaign status")
+  const { id, status } = parsed.data
 
   const supabase = await createClient()
   const { data } = await supabase.auth.getClaims()
