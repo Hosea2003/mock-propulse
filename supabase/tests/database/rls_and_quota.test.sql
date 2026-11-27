@@ -1,7 +1,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(18);
+select plan(19);
 
 -- Two users; profiles are created by the signup trigger
 insert into auth.users (id, email) values
@@ -74,6 +74,12 @@ select is(
 
 -- ── Write protection ────────────────────────────────────────────────────
 select pg_temp.login_as('11111111-1111-1111-1111-111111111111');
+update public.campaigns set status = 'paused';
+select is(
+  (select status::text from public.campaigns),
+  'paused',
+  'Alice can pause her own campaign'
+);
 select throws_ok(
   $$ insert into public.campaigns (instagram_handle) values ('sneaky') $$,
   '42501', null,

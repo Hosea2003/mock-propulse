@@ -1,4 +1,5 @@
 import { getDashboardData } from "@/features/dashboard/queries"
+import { Campaigns } from "@/features/dashboard/components/campaigns"
 import { EmptyState } from "@/features/dashboard/components/empty-state"
 import { FollowersChart } from "@/features/dashboard/components/followers-chart"
 import { QuotaCard } from "@/features/dashboard/components/quota-card"
@@ -7,7 +8,7 @@ import { TopTargets } from "@/features/dashboard/components/top-targets"
 import { WeeklyChart } from "@/features/dashboard/components/weekly-chart"
 
 export default async function DashboardPage() {
-  const { quota, stats, series, weekly, topTargets } = await getDashboardData()
+  const { quota, stats, series, weekly, topTargets, campaigns } = await getDashboardData()
   const hasResults = topTargets.some((t) => t.interactions > 0)
 
   return (
@@ -36,10 +37,12 @@ export default async function DashboardPage() {
               <QuotaCard quota={quota} />
             </div>
           </div>
+          <Campaigns campaigns={campaigns} />
         </>
       ) : (
         <>
           <QuotaCard quota={quota} />
+          {campaigns.length > 0 && <Campaigns campaigns={campaigns} />}
           <EmptyState />
         </>
       )}

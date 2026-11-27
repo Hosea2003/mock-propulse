@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server"
 import {
   PERIOD_DAYS,
   WEEKS,
+  type Campaign,
   type DailyPoint,
   type TopTarget,
   type WeeklyPoint,
@@ -46,8 +47,8 @@ export async function getDashboardData() {
       .limit(5),
     supabase
       .from("campaigns")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "active"),
+      .select("id, instagram_handle, status, campaign_targets(count)")
+      .order("created_at"),
   ])
 
   const error = quota.error ?? daily.error ?? targets.error ?? campaigns.error
@@ -72,6 +73,15 @@ export async function getDashboardData() {
     previous: weekTotals[i].followers,
   }))
 
+  const campaignList = (campaigns.data ?? []).map(
+    (c): Campaign => ({
+      id: c.id,
+      handle: c.instagram_handle,
+      status: c.status,
+      targets: c.campaign_targets[0]?.count ?? 0,
+    })
+  )
+
   const interactions = period.reduce((sum, p) => sum + p.interactions, 0)
 
   return {
@@ -84,8 +94,9 @@ export async function getDashboardData() {
       followers: total,
       interactions,
       followBackRate: interactions ? total / interactions : 0,
-      activeCampaigns: campaigns.count ?? 0,
+      activeCampaigns: campaignList.filter((c) => c.status === "active").length,
     },
+    campaigns: campaignList,
     series,
     weekly,
     topTargets: (targets.data ?? []).map(
