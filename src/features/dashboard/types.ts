@@ -16,6 +16,11 @@ export type TopTarget = {
   followBackRate: number
 }
 
+export const CAMPAIGN_STATUSES = ["active", "paused"] as const
+export type CampaignStatus = (typeof CAMPAIGN_STATUSES)[number]
+
+export type Campaign = { id: string; handle: string; status: CampaignStatus; targets: number }
+
 export type Quota = { planName: string; limit: number; used: number }
 
 export type Stats = {
