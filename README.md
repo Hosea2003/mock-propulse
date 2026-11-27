@@ -65,12 +65,15 @@ The seeded account is on the *Croissance* plan. It has two campaigns and 35 days
 | `pnpm db:stop` | Stop the local Supabase stack |
 | `pnpm db:status` | Show local URLs and keys |
 | `pnpm db:migrate` | Apply pending migrations from `supabase/migrations` |
-| `pnpm db:seed` | Run `supabase/seed.sql` against the local database |
+| `pnpm db:seed` | Run `supabase/seed.sql`, then `supabase/seed_results.sql`, against the local database |
+| `pnpm db:reseed` | Regenerate the demo results for the 35 days ending today, keeping accounts and campaigns |
 | `pnpm db:reset` | Drop the local database, re-apply all migrations, then seed |
 | `pnpm db:types` | Regenerate `src/lib/supabase/database.types.ts` from the local schema |
 | `pnpm db:test` | Run the pgTAP tests in `supabase/tests` |
 
 > **Note:** the seed inserts fixed IDs, so `pnpm db:seed` works only on an empty database. To start over, use `pnpm db:reset`.
+
+Results are seeded relative to the day you run the seed, so the dashboard empties out as the data ages. Run `pnpm db:reseed` to bring it back to today.
 
 To add a schema change, create a migration with `pnpm exec supabase migration new <name>`. Apply it with `pnpm db:migrate`, then run `pnpm db:types`.
 
@@ -98,6 +101,7 @@ src/
   proxy.ts           Session refresh and route protection
 supabase/
   migrations/        Schema: plans, profiles, campaigns, daily results, quota, dashboard views
-  seed.sql           Demo user and data
+  seed.sql           Demo user, campaigns and targets
+  seed_results.sql   Demo daily results, relative to today (re-runnable)
   tests/database/    RLS and quota tests
 ```
